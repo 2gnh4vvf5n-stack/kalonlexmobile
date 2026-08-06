@@ -386,7 +386,15 @@ function generateNomTables(word, container) {
 
 const PRONOUNS = {
     "Møj": { nominatif: "Møj", accusatif: "Møje", genitif: "Minja", datif: "Møjem", instrumental: "Møjes", locatif: "Mø", directif: "Mer", ablatif: "Møn", volitif: "Ix", comitatif: "Mek", essif: "Mijn", privatif: "Mija" },
-    "Tej": { nominatif: "Tej", accusatif: "Tje", genitif: "Tebja", datif: "Tijem", instrumental: "Tijes", locatif: "Tø", directif: "Ter", ablatif: "Tøn", volitif: "Dex", comitatif: "Tek", essif: "Tijn", privatif: "Tija" }
+    "Tej": { nominatif: "Tej", accusatif: "Tje", genitif: "Tebja", datif: "Tijem", instrumental: "Tijes", locatif: "Tø", directif: "Ter", ablatif: "Tøn", volitif: "Dex", comitatif: "Tek", essif: "Tijn", privatif: "Tija" },
+    "Džu": { nominatif: "Džu", accusatif: "Dže", genitif: "Džeja", datif: "Džem", instrumental: "Džes", locatif: "Dø", directif: "Džer", ablatif: "Džun", volitif: "Ex", comitatif: "Džek", essif: "Dijn", privatif: "Dija" },
+    "Adžu": { nominatif: "Adžu", accusatif: "Adže", genitif: "Adžeja", datif: "Adžem", instrumental: "Adžes", locatif: "Adø", directif: "Adžer", ablatif: "Adžun", volitif: "Anex", comitatif: "Adžek", essif: "Adijn", privatif: "Anadija" },
+    "Jal": { nominatif: "Jal", accusatif: "Jale", genitif: "Jaleja", datif: "Jalem", instrumental: "Jales", locatif: "Jø", directif: "Jer", ablatif: "Jen", volitif: "Jex", comitatif: "Jek", essif: "Jijn", privatif: "Jalija" },
+    "Krat": { nominatif: "Krat", accusatif: "Kratje", genitif: "Krija", datif: "Kratem", instrumental: "Krates", locatif: "Kø", directif: "Ker", ablatif: "Kjen", volitif: "Nax", comitatif: "Krek", essif: "Krijn", privatif: "Kratija" },
+    "Bis": { nominatif: "Bis", accusatif: "Bas", genitif: "Bisja", datif: "Bisem", instrumental: "Bes", locatif: "Bø", directif: "Ber", ablatif: "Bjen", volitif: "Vax", comitatif: "Bisek", essif: "Bisijn", privatif: "Bija" },
+    "Džen": { nominatif: "Džen", accusatif: "Džøj", genitif: "Dženija", datif: "Dženem", instrumental: "Dženes", locatif: "Džøn", directif: "Džeren", ablatif: "Denen", volitif: "Exen", comitatif: "Džeken", essif: "Dijnen", privatif: "Denija" },
+    "Adžen": { nominatif: "Adžen", accusatif: "Adžøj", genitif: "Adženija", datif: "Adženem", instrumental: "Adženes", locatif: "Adøn", directif: "Adžeren", ablatif: "Adenen", volitif: "Anexen", comitatif: "Adžeken", essif: "Adijnen", privatif: "Anadenija" },
+    "Jalen": { nominatif: "Jalen", accusatif: "Jaløj", genitif: "Jalenija", datif: "Jalenem", instrumental: "Jalenes", locatif: "Jøn", directif: "Jelen", ablatif: "Jenen", volitif: "Jexen", comitatif: "Jeken", essif: "Jenijn", privatif: "Jalijan" }
 };
 function generateSinglePronounTable(word, container) {
     const forms = PRONOUNS[word.lemme];
@@ -495,10 +503,34 @@ function setupButtons() {
 
     // CORRECTION CRITIQUE : Empêcher le rechargement de page natif avec .submit()
     // Bouton de sauvegarde
-    document.getElementById("saveBtn")?.addEventListener("click", (e) => {
+    // Bouton de sauvegarde (corrigé pour fonctionner même hors du formulaire)
+    document.getElementById("saveBtn")?.addEventListener("click", () => {
         const form = document.getElementById("wordForm");
-        if (form && !form.reportValidity()) {
-            e.preventDefault();
+        if (form && form.reportValidity()) {
+            const data = getFormData();
+
+            if (!data.lemme || !data.traduction) {
+                alert("Lemme et traduction obligatoires.");
+                return;
+            }
+
+            if (!data.id) {
+                // Nouveau mot
+                data.id = Date.now().toString();
+                lexique.push(data);
+            } else {
+                // Modification d'un mot existant
+                const index = lexique.findIndex(w => w.id === data.id);
+                if (index !== -1) {
+                    lexique[index] = data;
+                } else {
+                    lexique.push(data);
+                }
+            }
+
+            saveLexicon();
+            renderWordList(lexique);
+            selectWord(data.id);
         }
     });
 
