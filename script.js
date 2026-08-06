@@ -609,25 +609,4 @@ if ('serviceWorker' in navigator) {
             .catch(err => console.log('Échec de l\'enregistrement du Service Worker :', err));
     });
 }
-// --- OUTIL TEMPORAIRE D'IMPORTATION ---
-const tempImportBtn = document.createElement("button");
-tempImportBtn.textContent = "📥 Importer mon gros JSON";
-tempImportBtn.style.cssText = "position: fixed; bottom: 10px; right: 10px; z-index: 9999; background: #333; color: #fff; padding: 10px; border-radius: 8px; border: none; font-size: 12px;";
-tempImportBtn.addEventListener("click", () => {
-    const jsonInput = prompt("Colle le contenu de ton fichier lexique.json ici :");
-    if (!jsonInput) return;
-    try {
-        const parsedData = JSON.parse(jsonInput);
-        if (Array.isArray(parsedData)) {
-            lexique = parsedData;
-            saveLexicon();
-            renderWordList(lexique);
-            alert("Boom ! " + lexique.length + " mots importés avec succès !");
-        } else {
-            alert("Erreur : Ce n'est pas un tableau JSON valide.");
-        }
-    } catch (e) {
-        alert("Erreur de syntaxe : " + e.message);
-    }
-});
-document.body.appendChild(tempImportBtn);
+document.getElementById('word-count').textContent = `(${lexique.length} entrées)`;
