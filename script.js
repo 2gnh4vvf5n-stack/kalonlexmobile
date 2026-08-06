@@ -174,7 +174,21 @@ function renderWordList(list) {
     });
     updateWordCount();
 }
+function formatDeclinedForm(form, word) {
+    if (!form) return "";
+    
+    // Pronom ou Nom dont la sous-catégorie "propre" est cochée
+    const isPronoun = word.mainCategory === "Pronom";
+    const isProperNoun = word.mainCategory === "Nom" && word.subCategories && word.subCategories.includes("propre");
 
+    // Si c'est un pronom ou un nom propre, on garde la majuscule initiale
+    if (isPronoun || isProperNoun) {
+        return form;
+    }
+
+    // Sinon, on met la première lettre en minuscule
+    return form.charAt(0).toLowerCase() + form.slice(1);
+}
 /* ------------------------------------------------------------
    FORMULAIRES & CATÉGORIES
 ------------------------------------------------------------ */
@@ -285,7 +299,7 @@ const FUTURE = {
 };
 const PERSONS = ["Møj","Tej","Džu / Adžu / Jal","Krat","Bis","Džen / Adžen / Jalen"];
 
-function generateVerbTable(title, radical, suffixes, container) {
+function generateVerbTable(title, radical, suffixes, container, word) {
     const table = document.createElement("table");
     table.classList.add("morpho-table");
     table.innerHTML = `
@@ -297,7 +311,7 @@ function generateVerbTable(title, radical, suffixes, container) {
             ${suffixes.map((suf, i) => `
                 <tr>
                     <td>${PERSONS[i]}</td>
-                    <td class="copyable">${applyOrthography(radical, suf)}</td>
+                    <td class="copyable">${formatDeclinedForm(applyOrthography(radical, suf), word)}</td>
                 </tr>
             `).join("")}
         </tbody>
@@ -309,9 +323,9 @@ function generateVerbeTables(word, container) {
     const group = getVerbGroup(word.lemme);
     if (!group) return;
     const radical = getVerbRadical(word.lemme);
-    generateVerbTable("Présent", radical, PRESENT[group], container);
-    generateVerbTable("Passé", radical, PAST[group], container);
-    generateVerbTable("Futur", radical, FUTURE[group], container);
+    generateVerbTable("Présent", radical, PRESENT[group], container, word);
+    generateVerbTable("Passé", radical, PAST[group], container, word);
+    generateVerbTable("Futur", radical, FUTURE[group], container, word);
 }
 
 function applyOrthography(base, suffix) {
@@ -361,13 +375,13 @@ function generateAdjectifTables(word, container) {
     const tableInan = document.createElement("table");
     tableInan.classList.add("morpho-table");
     tableInan.innerHTML = `<thead><tr><th colspan="3">Inanimé</th></tr><tr><th>Cas</th><th>Singulier</th><th>Pluriel</th></tr></thead><tbody>` +
-        ADJ_INAN.map(r => `<tr><td>${r[0]}</td><td class="copyable">${applyOrthography(base, r[1])}</td><td class="copyable">${applyOrthography(base, r[2])}</td></tr>`).join("") + `</tbody>`;
+        ADJ_INAN.map(r => `<tr><td>${r[0]}</td><td class="copyable">${formatDeclinedForm(applyOrthography(base, r[1]), word)}</td><td class="copyable">${formatDeclinedForm(applyOrthography(base, r[2]), word)}</td></tr>`).join("") + `</tbody>`;
     container.appendChild(tableInan);
 
     const tableAnim = document.createElement("table");
     tableAnim.classList.add("morpho-table");
     tableAnim.innerHTML = `<thead><tr><th colspan="3">Animé</th></tr><tr><th>Cas</th><th>Singulier</th><th>Pluriel</th></tr></thead><tbody>` +
-        ADJ_ANIM.map(r => `<tr><td>${r[0]}</td><td class="copyable">${applyOrthography(animateBase, r[1].replace("-skii", ""))}</td><td class="copyable">${applyOrthography(animateBase, r[2].replace("-skien", ""))}</td></tr>`).join("") + `</tbody>`;
+        ADJ_ANIM.map(r => `<tr><td>${r[0]}</td><td class="copyable">${formatDeclinedForm(applyOrthography(animateBase, r[1].replace("-skii", "")), word)}</td><td class="copyable">${formatDeclinedForm(applyOrthography(animateBase, r[2].replace("-skien", "")), word)}</td></tr>`).join("") + `</tbody>`;
     container.appendChild(tableAnim);
 }
 
@@ -381,7 +395,7 @@ function generateNomTables(word, container) {
     const table = document.createElement("table");
     table.classList.add("morpho-table");
     table.innerHTML = `<thead><tr><th>Cas</th><th>Singulier</th><th>Pluriel</th></tr></thead><tbody>` +
-        cases.map(c => `<tr><td>${c[0]}</td><td class="copyable">${applyOrthography(word.lemme, c[1])}</td><td class="copyable">${applyOrthography(word.lemme, c[2])}</td></tr>`).join("") + `</tbody>`;
+        cases.map(c => `<tr><td>${c[0]}</td><td class="copyable">${formatDeclinedForm(applyOrthography(word.lemme, c[1]), word)}</td><td class="copyable">${formatDeclinedForm(applyOrthography(word.lemme, c[2]), word)}</td></tr>`).join("") + `</tbody>`;
     container.appendChild(table);
 }
 
@@ -416,7 +430,7 @@ function generateDeterminantDemoTable(word, container) {
     const table = document.createElement("table");
     table.classList.add("morpho-table");
     table.innerHTML = `<thead><tr><th colspan="2">Déterminant Démonstratif</th></tr></thead><tbody>` +
-        Object.entries(forms).map(([c, f]) => `<tr><td>${c}</td><td class="copyable">${f}</td></tr>`).join("") + `</tbody>`;
+        Object.entries(forms).map(([c, f]) => `<tr><td>${c}</td><td class="copyable">${formatDeclinedForm(f, word)}</td></tr>`).join("") + `</tbody>`;
     container.appendChild(table);
 }
 
