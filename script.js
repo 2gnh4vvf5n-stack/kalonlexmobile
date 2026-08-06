@@ -122,6 +122,7 @@ function renderWordList(list) {
     kalonAlphabet.forEach(letter => {
         const section = document.createElement("li");
         section.classList.add("alpha-section");
+        section.classList.add("open");
 
         // Header (flèche de droite supprimée)
         const header = document.createElement("div");
@@ -618,42 +619,64 @@ function showCopyFeedback(element) {
 /* ------------------------------------------------------------
    RECHERCHE INSTANTANÉE (CORRIGÉE)
 ------------------------------------------------------------ */
+/* ------------------------------------------------------------
+   RECHERCHE INSTANTANÉE (CORRIGÉE & FLUIDE)
+------------------------------------------------------------ */
 function setupSearch() {
     const searchInput = document.getElementById("searchInput");
     if (!searchInput) return;
 
     searchInput.addEventListener("input", (e) => {
         const q = e.target.value.toLowerCase().trim();
-        const sections = document.querySelectorAll(".alpha-section");
+        const container = document.getElementById("wordList");
+        if (!container) return;
 
-        sections.matchesQuery = true;
-        sections.forEach(section => {
-            const wordsInSec = section.querySelectorAll(".word-item");
-            let hasVisibleWord = false;
+        if (!q.length) {
+            renderWordList(lexique);
+            return;
+        }
 
-            wordsInSec.forEach(item => {
-                const lemmaText = item.querySelector(".word-lemma")?.textContent.toLowerCase() || "";
-                const tradText = item.querySelector(".word-trad")?.textContent.toLowerCase() || "";
+        const filtered = lexique.filter(w =>
+            (w.lemme || "").toLowerCase().includes(q) ||
+            (w.traduction || "").toLowerCase().includes(q)
+        );
 
-                if (lemmaText.includes(q) || tradText.includes(q)) {
-                    item.style.display = "";
-                    hasVisibleWord = true;
-                } else {
-                    item.style.display = "none";
-                }
+        // Affichage direct d'une liste plate de résultats filtrés
+        container.innerHTML = "";
+        
+        if (filtered.length === 0) {
+            const emptyLi = document.createElement("li");
+            emptyLi.style.padding = "10px";
+            emptyLi.style.color = "#666";
+            emptyLi.textContent = "Aucun mot trouvé";
+            container.appendChild(emptyLi);
+            return;
+        }
+
+        const ul = document.createElement("ul");
+        ul.classList.add("alpha-words");
+        ul.style.maxHeight = "none";
+
+        filtered.forEach(word => {
+            const li = document.createElement("li");
+            li.classList.add("word-item");
+            li.style.opacity = "1";
+            li.style.transform = "none";
+
+            li.innerHTML = `
+                <span class="word-lemma">${word.lemme}</span>
+                <span class="word-trad">${word.traduction || ""}</span>
+            `;
+
+            li.addEventListener("click", () => {
+                selectWord(word.id);
+                document.querySelector(".sidebar")?.classList.remove("visible");
             });
 
-            // Si la recherche est active et qu'il y a des mots correspondants, on ouvre la section automatiquement
-            if (q.length > 0 && hasVisibleWord) {
-                section.classList.add("open");
-                section.style.display = "";
-            } else if (q.length > 0 && !hasVisibleWord) {
-                section.style.display = "none";
-            } else {
-                section.style.display = "";
-                section.classList.remove("open");
-            }
+            ul.appendChild(li);
         });
+
+        container.appendChild(ul);
     });
 }
 // Enregistrement du Service Worker pour la PWA
