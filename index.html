@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KalonLex Mobile</title>
+
+    <!-- Style -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#d8c9a3">
+    <link rel="apple-touch-icon" href="assets/icon-1024.png">
+</head>
+<script>
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js");
+}
+</script>
+
+<body>
+    <div class="app-container">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <h1>KalonLex <span id="wordCount"></span></h1>
+
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Rechercher…">
+            </div>
+
+            <div id="listControls">
+                <button id="btnOpenAll">📃⬇️</button>
+                <button id="btnNewWord">➕</button>
+                <button id="btnCloseAll">📃⬆️</button>
+            </div>
+
+            <div class="word-list-container">
+                <ul id="wordList"></ul>
+            </div>
+            <div class="word-list-container">
+                <ul id="wordList"></ul>
+            </div>
+
+            <button id="btnScrollTop" class="scroll-top-btn">🔝</button>
+
+        </aside>
+
+        <!-- Bouton mobile -->
+        <button id="toggleSidebarBtn" class="floating-toggle">📂</button>
+
+        <!-- MAIN -->
+        <main class="main-content">
+
+            <!-- Vue accueil -->
+            <div id="welcomeView" class="view active">
+                <h2>Bienvenue</h2>
+                <p>Sélectionne un mot ou ajoute-en un nouveau.</p>
+            </div>
+
+            <!-- Vue détails -->
+            <div id="detailView" class="view">
+                <h2 id="detLemme"></h2>
+                <span id="detIpa" class="ipa-tag"></span>
+                <p><strong>Traduction :</strong> <span id="detTraduction"><span></p>
+                <p><strong>Catégorie :</strong> <span id="detailCategory"></span></p>
+                <p><strong>Sous‑catégories :</strong> <span id="detailSubCategories"></span></p>
+
+                <div id="dynamicTablesContainer"></div>
+
+                <button id="btnEdit">Modifier</button>
+                <button id="btnDelete">Supprimer</button>
+                <button id="btnBackHome">Accueil</button>
+            </div>
+
+            <!-- Vue formulaire -->
+            <div id="formView" class="view">
+                <h2 id="formTitle">Ajouter un mot</h2>
+
+                <form id="wordForm">
+                    <input type="hidden" id="formId">
+
+                    <label>Lemme</label>
+                    <input type="text" id="formLemme">
+
+                    <label>Traduction</label>
+                    <input type="text" id="formTraduction">
+
+                
+                    <label for="mainCategory">Catégorie principale</label>
+                    <select id="mainCategory" name="mainCategory">
+                        <option value="">— choisir —</option>
+                    </select>
+
+                    <div id="subCategoriesContainer"></div>
+
+                    <label>Synonymes</label>
+                    <input type="text" id="formSynonymes">
+
+                    <label>Exemples</label>
+                    <textarea id="formExemples"></textarea>
+
+                    <label>Notes</label>
+                    <textarea id="formNotes"></textarea>
+
+                    <button id="saveBtn">Enregistrer</button>
+                    <button id="cancelBtn">Annuler</button>
+                </form>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="script.js" defer></script>
+</body>
+</html>
