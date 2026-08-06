@@ -539,10 +539,12 @@ function setupButtons() {
     });
 
     // Bouton "Top" pour remonter tout en haut de la liste de la sidebar
-    document.getElementById("btnTop")?.addEventListener("click", () => {
-        const sidebarList = document.getElementById("wordList");
+    document.getElementById("btnScrollTop")?.addEventListener("click", () => {
+        const sidebarList = document.querySelector(".word-list-container");
         if (sidebarList) {
             sidebarList.scrollTo({ top: 0, behavior: "smooth" });
+        } else {
+            window.scrollTo({ top: 0, behavior: "smooth" });
         }
     });
 }
@@ -579,7 +581,7 @@ function showCopyFeedback(element) {
 }
 
 /* ------------------------------------------------------------
-   RECHERCHE INSTANTANÉE
+   RECHERCHE INSTANTANÉE (CORRIGÉE)
 ------------------------------------------------------------ */
 function setupSearch() {
     const searchInput = document.getElementById("searchInput");
@@ -587,18 +589,36 @@ function setupSearch() {
 
     searchInput.addEventListener("input", (e) => {
         const q = e.target.value.toLowerCase().trim();
+        const sections = document.querySelectorAll(".alpha-section");
 
-        if (!q.length) {
-            renderWordList(lexique);
-            return;
-        }
+        sections.matchesQuery = true;
+        sections.forEach(section => {
+            const wordsInSec = section.querySelectorAll(".word-item");
+            let hasVisibleWord = false;
 
-        const filtered = lexique.filter(w =>
-            w.lemme.toLowerCase().includes(q) ||
-            (w.traduction || "").toLowerCase().includes(q)
-        );
+            wordsInSec.forEach(item => {
+                const lemmaText = item.querySelector(".word-lemma")?.textContent.toLowerCase() || "";
+                const tradText = item.querySelector(".word-trad")?.textContent.toLowerCase() || "";
 
-        renderWordList(filtered);
+                if (lemmaText.includes(q) || tradText.includes(q)) {
+                    item.style.display = "";
+                    hasVisibleWord = true;
+                } else {
+                    item.style.display = "none";
+                }
+            });
+
+            // Si la recherche est active et qu'il y a des mots correspondants, on ouvre la section automatiquement
+            if (q.length > 0 && hasVisibleWord) {
+                section.classList.add("open");
+                section.style.display = "";
+            } else if (q.length > 0 && !hasVisibleWord) {
+                section.style.display = "none";
+            } else {
+                section.style.display = "";
+                section.classList.remove("open");
+            }
+        });
     });
 }
 // Enregistrement du Service Worker pour la PWA
