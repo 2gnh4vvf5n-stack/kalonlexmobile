@@ -58,22 +58,32 @@ if ("serviceWorker" in navigator) {
 
             <!-- Vue détails -->
             <div id="detailView" class="view">
-                <h2 id="detLemme"></h2>
+                <div class="detail-header-row" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                    <h2 id="detLemme" style="margin: 0;"></h2>
+                    <div class="detail-actions">
+                        <button id="btnEdit" class="action-btn" title="Modifier">🖋</button>
+                        <button id="btnDelete" class="action-btn" title="Supprimer">❌</button>
+                        <button id="btnBackHome" class="action-btn" title="Accueil">🏠</button>
+                    </div>
+                </div>
+    
                 <span id="detIpa" class="ipa-tag"></span>
-                <p><strong>Traduction :</strong> <span id="detTraduction"><span></p>
+                <p><strong>Traduction :</strong> <span id="detTraduction"></span></p>
                 <p><strong>Catégorie :</strong> <span id="detailCategory"></span></p>
                 <p><strong>Sous‑catégories :</strong> <span id="detailSubCategories"></span></p>
 
                 <div id="dynamicTablesContainer"></div>
-
-                <button id="btnEdit">Modifier</button>
-                <button id="btnDelete">Supprimer</button>
-                <button id="btnBackHome">Accueil</button>
             </div>
 
             <!-- Vue formulaire -->
             <div id="formView" class="view">
-                <h2 id="formTitle">Ajouter un mot</h2>
+                <div class="form-header-row" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                    <h2 id="formTitle" style="margin: 0;">Ajouter un mot</h2>
+                    <div class="form-actions">
+                        <button id="saveBtn" class="action-btn" title="Enregistrer">💾</button>
+                        <button id="cancelBtn" class="action-btn" title="Annuler">❌</button>
+                    </div>
+                </div>
 
                 <form id="wordForm">
                     <input type="hidden" id="formId">
@@ -100,9 +110,6 @@ if ("serviceWorker" in navigator) {
 
                     <label>Notes</label>
                     <textarea id="formNotes"></textarea>
-
-                    <button id="saveBtn">Enregistrer</button>
-                    <button id="cancelBtn">Annuler</button>
                 </form>
             </div>
 

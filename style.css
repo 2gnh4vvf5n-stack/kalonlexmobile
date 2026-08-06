@@ -108,6 +108,20 @@ body {
     color: #555;
 }
 
+.action-btn {
+    background-color: #f4ecd8; /* Adapte selon la couleur de fond de tes boutons actuels */
+    border: 1px solid #c8b993;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.action-btn:hover {
+    background-color: #e6dbbc;
+}
+
 /* ============================================================
    MAIN CONTENT
    ============================================================ */
