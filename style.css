@@ -282,15 +282,14 @@ select {
     transition: max-height 0.3s ease;
 }
 
-.alpha-section.open .alpha-words {
-    max-height: 500px; /* assez pour contenir tous les mots */
-}
-
-
 .alpha-words li {
     opacity: 0;
     transform: translateY(-4px);
     transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.alpha-section.open .alpha-words {
+    max-height: none; /* Supprime la limite fixe et s'adapte à tout le contenu ! */
 }
 
 .alpha-section.open .alpha-words li {
