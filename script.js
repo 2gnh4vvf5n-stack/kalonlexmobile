@@ -89,10 +89,12 @@ function loadLexicon() {
     const data = localStorage.getItem("kalonlex_mobile");
     lexique = data ? JSON.parse(data) : [];
     renderWordList(lexique);
+    updateWordCount();
 }
 
 function saveLexicon() {
     localStorage.setItem("kalonlex_mobile", JSON.stringify(lexique));
+    updateWordCount();
 }
 
 /* ------------------------------------------------------------
@@ -169,6 +171,7 @@ function renderWordList(list) {
 
         container.appendChild(section);
     });
+    updateWordCount();
 }
 
 /* ------------------------------------------------------------
@@ -629,4 +632,9 @@ if ('serviceWorker' in navigator) {
             .catch(err => console.log('Échec de l\'enregistrement du Service Worker :', err));
     });
 }
-document.getElementById('word-count').textContent = `(${lexique.length} entrées)`;
+function updateWordCount() {
+    const counter = document.getElementById('word-count');
+    if (counter) {
+        counter.textContent = `(${lexique.length} entrées)`;
+    }
+}
