@@ -7,9 +7,36 @@
 ------------------------------------------------------------ */
 let lexique = [];
 let currentWordId = null;
+// Ton alphabet Kalonnien officiel
 const kalonAlphabet = [
-    "A","B","C","D","E","Ë","F","G","I","J","K","L","M","N","O","Ø","P","Q","R","S","Š","T","U","Ü","V","Z","Ž"
+    "A", "B", "C", "D", "E", "Ë", "F", "G", "I", "J", "K", "L", "M", "N", "O", "Ø", "P", "Q", "R", "S", "Š", "T", "U", "Ü", "V", "Z", "Ž"
 ];
+
+// Fonction pour trouver l'index d'une lettre (gère les minuscules/majuscules)
+function getKalonLetterIndex(char) {
+    const upper = char.toUpperCase();
+    const index = kalonAlphabet.indexOf(upper);
+    return index !== -1 ? index : 999; // Si une lettre inconnue traîne, elle va à la fin
+}
+
+// Fonction de comparaison : respecte l'alphabet et place les mots courts d'abord
+function compareKalonWords(a, b) {
+    const wordA = a.lemme;
+    const wordB = b.lemme;
+    
+    const minLen = Math.min(wordA.length, wordB.length);
+    for (let i = 0; i < minLen; i++) {
+        const charA = wordA[i];
+        const charB = wordB[i];
+        
+        if (charA !== charB) {
+            return getKalonLetterIndex(charA) - getKalonLetterIndex(charB);
+        }
+    }
+    
+    // Si un mot est le préfixe de l'autre, le plus court vient en premier (ex: Da avant Daden)
+    return wordA.length - wordB.length;
+}
 const VOWELS = ["a","e","i","o","u","ø","ë","ü"];
 
 const categories = {
@@ -104,7 +131,10 @@ function renderWordList(list) {
     const container = document.getElementById("wordList");
     if (!container) return;
     container.innerHTML = "";
-
+// Trier chaque groupe alphabétique avec l'ordre strict de ton alphabet kalonnien
+    Object.keys(groups).forEach(letter => {
+        groups[letter].sort(compareKalonWords);
+    });
     const groups = {};
 
     // Regrouper les mots par première lettre (avec déduplication par ID par sécurité)
