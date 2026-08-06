@@ -131,10 +131,7 @@ function renderWordList(list) {
     const container = document.getElementById("wordList");
     if (!container) return;
     container.innerHTML = "";
-// Trier chaque groupe alphabétique avec l'ordre strict de ton alphabet kalonnien
-    Object.keys(groups).forEach(letter => {
-        groups[letter].sort(compareKalonWords);
-    });
+
     const groups = {};
 
     // Regrouper les mots par première lettre (avec déduplication par ID par sécurité)
@@ -147,10 +144,10 @@ function renderWordList(list) {
         if (!groups[letter]) groups[letter] = [];
         groups[letter].push(word);
     });
+
+    // Trier chaque groupe alphabétique avec l'ordre strict de ton alphabet kalonnien (et les plus courts d'abord)
     Object.keys(groups).forEach(letter => {
-        groups[letter].sort((a, b) => 
-            a.lemme.localeCompare(b.lemme, 'fr', { sensitivity: 'accent' })
-        );
+        groups[letter].sort(compareKalonWords);
     });
 
     // Créer toutes les lettres de l'alphabet kalonnien
@@ -159,7 +156,7 @@ function renderWordList(list) {
         section.classList.add("alpha-section");
         section.classList.add("open");
 
-        // Header (flèche de droite supprimée)
+        // Header
         const header = document.createElement("div");
         header.classList.add("alpha-header");
         const count = groups[letter] ? groups[letter].length : 0;
