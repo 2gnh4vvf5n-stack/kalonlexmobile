@@ -117,6 +117,11 @@ function renderWordList(list) {
         if (!groups[letter]) groups[letter] = [];
         groups[letter].push(word);
     });
+    Object.keys(groups).forEach(letter => {
+        groups[letter].sort((a, b) => 
+            a.lemme.localeCompare(b.lemme, 'fr', { sensitivity: 'accent' })
+        );
+    });
 
     // Créer toutes les lettres de l'alphabet kalonnien
     kalonAlphabet.forEach(letter => {
